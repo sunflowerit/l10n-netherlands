@@ -92,10 +92,12 @@ class XafAuditfileExport(models.Model):
     @api.multi
     def button_generate(self):
         self.date_generated = fields.Datetime.now(self)
-        auditfile_template = self._get_auditfile_template()
-        xml = auditfile_template.render(values={
-            'self': self,
-        })
+
+        xml = self.env.ref('l10n_nl_xaf_auditfile_export.auditfile_template')\
+            .render(values={
+                'self': self.sudo(),
+            })
+
         # the following is dealing with the fact that qweb templates don't like
         # namespaces, but we need the correct namespaces for validation
         # we inject them at parse time in order not to traverse the document
