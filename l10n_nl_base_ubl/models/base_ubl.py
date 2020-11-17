@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 # Copyright 2020 Onestein (<https://www.onestein.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from lxml import etree
 
-from odoo import api, models
+from openerp import api, models
 
 
 class BaseUbl(models.AbstractModel):
@@ -11,7 +12,7 @@ class BaseUbl(models.AbstractModel):
 
     @api.model
     def _ubl_add_party_identification(self, partner, parent_node, ns, version="2.1"):
-        res = super()._ubl_add_party_identification(
+        res = super(BaseUbl, self)._ubl_add_party_identification(
             partner, parent_node, ns, version=version
         )
 
@@ -33,6 +34,7 @@ class BaseUbl(models.AbstractModel):
 
         return res
 
+    @api.model
     def _l10n_nl_base_ubl_get_kvk(self, partner):
         """
         In case OCA module 'partner_coc' is installed, returns the value of
@@ -45,6 +47,7 @@ class BaseUbl(models.AbstractModel):
             return partner.coc_registration_number
         return False
 
+    @api.model
     def _l10n_nl_base_ubl_get_oin(self, partner):
         """
         In case OCA module 'l10n_nl_oin' is installed, returns the value of
