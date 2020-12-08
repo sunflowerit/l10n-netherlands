@@ -15,9 +15,23 @@ class AccountInvoice(models.Model):
     _inherit = ['account.invoice']
 
     @api.multi
+    def generate_ubl_xml_string(self, version='2.1'):
+        self.ensure_one()
+        # If we need to do Dutch modifications, flag that in the context
+        assert self.partner_id
+        if self.env['base.ubl']._l10n_nl_base_ubl_use_dutch_ubl(self.partner_id):
+            this = self.with_context(l10n_nl_base_ubl_use_dutch_ubl=True)
+        else:
+            this = self
+        return super(AccountInvoice, this).generate_ubl_xml_string(version=version)
+
+    @api.multi
     def _ubl_add_header(self, parent_node, ns, version='2.1'):
         res = super(AccountInvoice, self)._ubl_add_header(
             parent_node, ns, version=version)
+
+        if not self.env.context.get('l10n_nl_base_ubl_use_dutch_ubl'):
+            return res
 
         # We add CustomizationID in the header just after UBLVersionID
         ubl_version_id = parent_node.find(ns["cbc"] + "UBLVersionID")
@@ -27,3 +41,13 @@ class AccountInvoice(models.Model):
         ubl_version_id.addnext(customization_id)
 
         return res
+
+    def _ubl_add_invoice_line_tax_total(
+            self, iline, parent_node, ns, version='2.1'):
+
+        if not self.env.context.get('l10n_nl_base_ubl_use_dutch_ubl'):
+            return super(AccountInvoice, self)._ubl_add_invoice_line_tax_total(
+                iline, parent_node, ns, version=version)
+
+        # UBL-CR-561: A UBL invoice should not include the InvoiceLine TaxTotal
+        return None
