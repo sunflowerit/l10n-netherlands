@@ -109,9 +109,9 @@ class BaseUbl(models.AbstractModel):
         # UBL-CR-249: A UBL invoice should not include the AccountingCustomerParty
         #             Party PartyLegalEntity RegistrationAddress
         legal_entity = party.find(ns['cac'] + "PartyLegalEntity")
-        if legal_entity:
+        if legal_entity is not None:
             address = legal_entity.find(ns['cac'] + "RegistrationAddress")
-            if address:
+            if address is not None:
                 legal_entity.remove(address)
 
         return res

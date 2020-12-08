@@ -51,3 +51,31 @@ class AccountInvoice(models.Model):
 
         # UBL-CR-561: A UBL invoice should not include the InvoiceLine TaxTotal
         return None
+
+    @api.model
+    def _ubl_add_payment_means(
+            self, partner_bank, payment_mode, date_due, parent_node, ns,
+            version='2.1'):
+
+        res = super(AccountInvoice, self)._ubl_add_payment_means(
+            partner_bank, payment_mode, date_due, parent_node, ns, version=version
+        )
+
+        if not self.env.context.get('l10n_nl_base_ubl_use_dutch_ubl'):
+            return res
+
+        # UBL-CR-412: A UBL invoice should not include the PaymentMeans PaymentDueDate
+        invoice = parent_node
+        payment_means = invoice.find(ns['cac'] + 'PaymentMeans')
+        if payment_means is not None:
+            payment_due_date = payment_means.find(ns['cbc'] + 'PaymentDueDate')
+            if payment_due_date is not None:
+                payment_means.remove(payment_due_date)
+
+            # UBL-CR-661: A UBL invoice should not include the PaymentMeansCode listID
+            payment_means_code = payment_means.find(ns['cbc'] + 'PaymentMeansCode')
+            if payment_means_code is not None:
+                payment_means_code.attrib.pop("listID", None)
+
+        return res
+
