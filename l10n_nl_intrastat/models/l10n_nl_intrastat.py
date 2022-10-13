@@ -27,10 +27,6 @@ class ReportIntrastat(models.Model):
         help="Date range of the declaration.")
 
     last_updated = fields.Datetime(readonly=True)
-    date_range_id = fields.Many2one(
-        'date.range',
-        'Date range'
-    )
     date_from = fields.Date(required=True)
     date_to = fields.Date(required=True)
     company_id = fields.Many2one(
@@ -39,9 +35,10 @@ class ReportIntrastat(models.Model):
         string='Company',
         required=True
     )
-    total_amount = fields.Monetary(
+    total_amount = fields.Float(
         string='Total amount',
         readonly=True,
+        digits=dp.get_precision('Account'),
         help='Total amount in company currency of the declaration.'
     )
     currency_id = fields.Many2one(
@@ -65,12 +62,6 @@ class ReportIntrastat(models.Model):
         string='ICP line',
         readonly=True,
     )
-
-    @api.onchange('date_range_id')
-    def _onchange_date_range_id(self):
-        if self.date_range_id:
-            self.date_from = self.date_range_id.date_start
-            self.date_to = self.date_range_id.date_end
 
     @api.multi
     def set_draft(self):
@@ -202,11 +193,13 @@ class ReportIntrastatLine(models.Model):
         string='Currency',
         readonly=True
     )
-    amount_product = fields.Monetary(
+    amount_product = fields.Float(
         string='Amount products',
+        digits=dp.get_precision('Account'),
         readonly=True
     )
-    amount_service = fields.Monetary(
+    amount_service = fields.Float(
         string='Amount services',
+        digits=dp.get_precision('Account'),
         readonly=True
     )

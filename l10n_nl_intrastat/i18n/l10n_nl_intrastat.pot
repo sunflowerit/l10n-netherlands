@@ -84,12 +84,6 @@ msgid "Date from"
 msgstr ""
 
 #. module: l10n_nl_intrastat
-#: model:ir.model.fields,field_description:l10n_nl_intrastat.field_l10n_nl_report_intrastat_date_range_id
-#: model:ir.ui.view,arch_db:l10n_nl_intrastat.report_nl_intrastat_filters
-msgid "Date range"
-msgstr ""
-
-#. module: l10n_nl_intrastat
 #: model:ir.model.fields,help:l10n_nl_intrastat.field_l10n_nl_report_intrastat_year_month
 msgid "Date range of the declaration."
 msgstr ""

@@ -28,40 +28,6 @@ class TestIntrastatNL(TransactionCase):
         )
         self.land_account = self.env.ref('account.demo_sale_of_land_account')
 
-    def test_date_range(self):
-        company = self.company
-
-        # Create a date range type
-        type = self.env['date.range.type'].create({
-            'name': 'Test date range type',
-            'company_id': company.id,
-            'allow_overlap': False
-        })
-
-        # Create a date range spanning the last three months
-        start_date = date.today() - relativedelta(months=3)
-        start_date = fields.Date.to_string(start_date)
-        date_range = self.env['date.range'].create({
-            'name': 'FS2016',
-            'date_start': start_date,
-            'date_end': fields.Date.today(),
-            'company_id': company.id,
-            'type_id': type.id
-        })
-
-        # Create an empty, draft intracom report
-        report = self.env['l10n_nl.report.intrastat'].create({
-            'company_id': company.id,
-            'date_from': fields.Date.today(),
-            'date_to': fields.Date.today(),
-        })
-
-        # test that dates are updated
-        report.write({'date_range_id': date_range.id})
-        report._onchange_date_range_id()
-        self.assertEquals(report.date_from, start_date)
-        self.assertEquals(report.date_to, fields.Date.today())
-
     def test_generate_report(self):
         # Set our company's country to NL
         Tax = self.env['account.tax']
@@ -76,7 +42,6 @@ class TestIntrastatNL(TransactionCase):
             'date_from': start_date,
             'date_to': fields.Date.today(),
         })
-        report._onchange_date_range_id()
         self.assertEquals(report.state, 'draft')
 
         # Generate lines and store initial total
