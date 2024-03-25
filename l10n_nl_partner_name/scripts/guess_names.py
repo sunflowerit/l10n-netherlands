@@ -29,7 +29,7 @@ def odoo_execute(model, method, *pargs, **kwargs):
     )
 
 
-infixes = ["van", "der", "ter", "de", "v/d"]
+infixes = ["van", "der", "ter", "de", "v/d", "vd", "v.d."]
 initial = re.compile(r"^([A-Z]{1,3}\.{0,1}){1,4}$")
 
 limit = 100000
