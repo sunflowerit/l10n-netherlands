@@ -71,7 +71,6 @@
                     nolabel="1"
                     placeholder="Initials"
                     class="oe_inline"
-                    style="max-width: 2em"
                 />
           </xpath>
           <xpath expr="//field[@name='lastname']" position="before">
@@ -80,7 +79,6 @@
                     nolabel="1"
                     placeholder="Infix"
                     class="oe_inline"
-                    style="max-width: 2em"
                 />
           </xpath>
           <xpath
